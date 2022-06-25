@@ -54,26 +54,26 @@ struct RandomizerScreen: View {
         NavigationView {
             Form {
                 Section {
-                    HStack {
-                        Text("Год рождения")
-                        Spacer()
-                    }
-                    Picker("Год рождения", selection: $birthYear) {
-                        ForEach(minYear...maxYear, id: \.self) {
-                            Text(String($0))
+                    VStack {
+                        HStack {
+                            Text("Год рождения").bold()
+                            Spacer()
                         }
+                        Picker("Год рождения", selection: $birthYear) {
+                            ForEach(minYear...maxYear, id: \.self) {
+                                Text(String($0))
+                            }
+                        }
+                        .pickerStyle(.wheel)
+                        .frame(height: 120)
+                        .clipped()
                     }
-                    .pickerStyle(.wheel)
-                    .frame(height: 120)
-                }
-                Section {
+                    .padding(.top, 8)
                     MedicalCalculatorField(
                         title: "Рост",
                         fromValue: $heightFrom,
                         toValue: $heightTo
                     )
-                }
-                Section {
                     MedicalCalculatorField(
                         title: "Вес",
                         fromValue: $weightFrom,
@@ -121,6 +121,7 @@ struct RandomizerScreen: View {
                     }
                 }
             }
+            .padding(.top, -20)
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Диспансеризация")
             .toolbar {
@@ -135,7 +136,12 @@ struct RandomizerScreen: View {
                 }
                 ToolbarItem(placement: .keyboard) {
                     Button("Готово") {
-                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                        UIApplication.shared.sendAction(
+                            #selector(UIResponder.resignFirstResponder),
+                            to: nil,
+                            from: nil,
+                            for: nil
+                        )
                     }
                 }
             }
@@ -144,9 +150,20 @@ struct RandomizerScreen: View {
 }
 
 struct MedicalCalculatorField: View {
-    let title: String
-    @Binding var fromValue: Int
-    @Binding var toValue: Int
+    private let title: String
+    
+    @Binding private var fromValue: Int
+    @Binding private var toValue: Int
+    
+    init(
+        title: String,
+        fromValue: Binding<Int>,
+        toValue: Binding<Int>
+    ) {
+        self.title = title
+        self._fromValue = fromValue
+        self._toValue = toValue
+    }
     
     var body: some View {
         VStack {
